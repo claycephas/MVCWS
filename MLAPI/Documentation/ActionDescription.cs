@@ -8,57 +8,78 @@ namespace MLAPI.Documentation
 {
 	public class ActionDescription
 	{
-		public ObjectDescription DeclaringObject { get; protected set; }
-		public string Summary { get; protected set; }
-		public string Name { get; protected set; }
-		public ParameterDescription[] Parameters { get; protected set; }
-		public ObjectDescription Response { get; protected set; }
+	// Fields
+		private ObjectDescription _declaringObject;
+		private MethodInfo _method;
 
+	// Constructors
 		public ActionDescription(MethodInfo method, ObjectDescription declaringObject)
-			: this(method, declaringObject, new Stack<Type>()) { }
-
-		public ActionDescription(MethodInfo method, ObjectDescription declaringObject, Stack<Type> visitedTypes)
 		{
-			this.DeclaringObject = declaringObject;
-			this.Name = method.Name;
-			FillResponse(method, visitedTypes);
-			FillDocumentation(method);
-			FillParameters(method, visitedTypes);
+			this._declaringObject = declaringObject;
+			this._method = method;
 		}
 
-		private void FillDocumentation(MethodInfo method)
+	// Properties
+		public ObjectDescription DeclaringObject
 		{
-			// Fill in the information from the XML documentation file
-			XElement methodXml = ActionDescription.GetActionDocumentation(method);
-			if (methodXml != null)
+			get
 			{
-				XElement summaryXml = methodXml.Element("summary");
-				if (summaryXml != null)
+				return this._declaringObject;
+			}
+		}
+
+		public string Summary
+		{
+			get
+			{
+				string summary = null;
+				XElement methodXml = ActionDescription.GetActionDocumentation(this._method);
+				if (methodXml != null)
 				{
-					this.Summary = summaryXml.Value;
+					XElement summaryXml = methodXml.Element("summary");
+					if (summaryXml != null)
+					{
+						summary = summaryXml.Value;
+					}
 				}
+				return summary;
 			}
 		}
 
-		private void FillParameters(MethodInfo method, Stack<Type> visitedTypes)
+		public string Name
 		{
-			List<ParameterDescription> parameterList = new List<ParameterDescription>();
-			foreach (ParameterInfo parameter in method.GetParameters())
+			get
 			{
-				parameterList.Add(new ParameterDescription(parameter, this, visitedTypes));
+				return this._method.Name;
 			}
-			this.Parameters = parameterList.ToArray();
 		}
 
-		private void FillResponse(MethodInfo method, Stack<Type> visitedTypes)
+		public ParameterDescription[] Parameters
 		{
-			this.Response = new ObjectDescription(method.ReturnType, this.DeclaringObject.DeclaringServiceArea);
+			get
+			{
+				List<ParameterDescription> parameterList = new List<ParameterDescription>();
+				foreach (ParameterInfo parameter in this._method.GetParameters())
+				{
+					parameterList.Add(new ParameterDescription(parameter, this));
+				}
+				return parameterList.ToArray();
+			}
 		}
 
-		public static XElement GetActionDocumentation(MethodInfo method)
+		public ObjectDescription Response
+		{
+			get
+			{
+				return new ObjectDescription(this._method.ReturnType, this.DeclaringObject.DeclaringServiceArea);
+			}
+		}
+
+	// Methods
+		static public XElement GetActionDocumentation(MethodInfo method)
 		{
 			XElement methodXml = null;
-			XDocument xml = ServiceAreaDescription.GetServiceDocumentation(method.DeclaringType.Assembly);
+			XDocument xml = ServiceAreaDescription.GetServiceAreaDocumentation(method.DeclaringType.Assembly);
 			if (xml != null)
 			{
 				XElement members = xml.Root.Element("members");

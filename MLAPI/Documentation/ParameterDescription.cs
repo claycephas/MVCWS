@@ -8,29 +8,70 @@ namespace MLAPI.Documentation
 {
 	public class ParameterDescription
 	{
-		public ActionDescription DeclaringAction { get; protected set; }
-		public string Summary { get; protected set; }
-		public string Name { get; protected set; }
-		public ObjectDescription Type { get; protected set; }
+	// Fields
+		private ActionDescription _declaringAction;
+		private ParameterInfo _parameter;
 
+	// Constructors
 		public ParameterDescription(ParameterInfo parameter, ActionDescription declaringAction)
-			: this(parameter, declaringAction, new Stack<Type>()) { }
-
-		public ParameterDescription(ParameterInfo parameter, ActionDescription declaringAction, Stack<Type> visitedTypes)
 		{
-			this.Name = parameter.Name;
-			this.DeclaringAction = declaringAction;
-			this.Type = new ObjectDescription(parameter.ParameterType, declaringAction.DeclaringObject.DeclaringServiceArea);
+			this._declaringAction = declaringAction;
+			this._parameter = parameter;
+		}
 
+	// Properties
+		public ActionDescription DeclaringAction
+		{
+			get
+			{
+				return this._declaringAction;
+			}
+		}
+
+		public string Summary
+		{
+			get
+			{
+				string summary = null;
+				XElement methodXml = ActionDescription.GetActionDocumentation((MethodInfo)this._parameter.Member);
+				if (methodXml != null)
+				{
+					XElement parameterXml = methodXml.Elements().FirstOrDefault(e => e.Name == "param" && e.Attribute("name").Value == this._parameter.Name);
+					if (parameterXml != null)
+					{
+						summary = parameterXml.Value;
+					}
+				}
+				return summary;
+			}
+		}
+
+		public string Name
+		{
+			get
+			{
+				return this._parameter.Name;
+			}
+		}
+
+		public ObjectDescription Type
+		{
+			get
+			{
+				return new ObjectDescription(this._parameter.ParameterType, this._declaringAction.DeclaringObject.DeclaringServiceArea);
+			}
+		}
+
+	// Methods
+		static public XElement GetParameterDocumentation(ParameterInfo parameter)
+		{
+			XElement parameterXml = null;
 			XElement methodXml = ActionDescription.GetActionDocumentation((MethodInfo)parameter.Member);
 			if (methodXml != null)
 			{
-				XElement parameterXml = methodXml.Elements().FirstOrDefault(e => e.Name == "param" && e.Attribute("name").Value == parameter.Name);
-				if (parameterXml != null)
-				{
-					this.Summary = parameterXml.Value;
-				}
+				parameterXml = methodXml.Elements().FirstOrDefault(e => e.Name == "param" && e.Attribute("name").Value == parameter.Name);
 			}
+			return parameterXml;
 		}
 	}
 }

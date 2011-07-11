@@ -13,27 +13,28 @@ namespace MLAPI.Documentation
 			"System."
 		};
 
-	// Constructors
-		public ObjectDescription(Type type, ServiceAreaDescription declaringServiceArea)
-		{
-			this._type = this._innerType = type;
-			if (type.IsGenericType && type.Name.StartsWith("ServiceResult"))
-			{
-				this._innerType = type.GetGenericArguments()[0];
-			}
-			// If the type is an array, get the element type
-			if (type.IsArray)
-			{
-				this._innerType = type.GetElementType();
-			}
-
-			this._declaringServiceArea = declaringServiceArea;
-		}
-
 	// Fields
 		private ServiceAreaDescription _declaringServiceArea;
 		private Type _innerType;
 		private Type _type;
+
+	// Constructors
+		public ObjectDescription(Type type, ServiceAreaDescription declaringServiceArea)
+		{
+			this._innerType = this._type = type;
+			// For ServiceResult, use the first type parameter as the type of object
+			if (type.IsGenericType && type.Name.StartsWith("ServiceResult"))
+			{
+				this._innerType = this._type = type.GetGenericArguments()[0];
+			}
+			// If the type is an array, use the element type as the inner type
+			if (this._type.IsArray)
+			{
+				this._innerType = this._type.GetElementType();
+			}
+
+			this._declaringServiceArea = declaringServiceArea;
+		}
 
 	// Properties
 		public ActionDescription[] Actions
@@ -87,15 +88,7 @@ namespace MLAPI.Documentation
 		{
 			get
 			{
-				// Include the [] for array types
-				if (this._type.IsArray)
-				{
-					return this._type.Name;
-				}
-				else
-				{
-					return this._innerType.Name.Replace("Controller", String.Empty);
-				}
+				return this._type.Name.Replace("Controller", string.Empty);
 			}
 		}
 
@@ -104,7 +97,7 @@ namespace MLAPI.Documentation
 			get
 			{
 				string summary = null;
-				XElement typeXml = ObjectDescription.GetTypeDocumentation(this._innerType);
+				XElement typeXml = ObjectDescription.GetObjectDocumentation(this._innerType);
 				if (typeXml != null)
 				{
 					XElement summaryXml = typeXml.Element("summary");
@@ -117,19 +110,20 @@ namespace MLAPI.Documentation
 			}
 		}
 
-		public static XElement GetTypeDocumentation(Type type)
+	// Methods
+		static public XElement GetObjectDocumentation(Type type)
 		{
-			XElement typeXml = null;
-			XDocument xml = ServiceAreaDescription.GetServiceDocumentation(type.Assembly);
+			XElement objectXml = null;
+			XDocument xml = ServiceAreaDescription.GetServiceAreaDocumentation(type.Assembly);
 			if (xml != null)
 			{
 				XElement members = xml.Root.Element("members");
 				if (members != null)
 				{
-					typeXml = members.Elements().FirstOrDefault(e => e.Attribute("name").Value == "T:" + type.FullName);
+					objectXml = members.Elements().FirstOrDefault(e => e.Attribute("name").Value == "T:" + type.FullName);
 				}
 			}
-			return typeXml;
+			return objectXml;
 		}
 	}
 }
