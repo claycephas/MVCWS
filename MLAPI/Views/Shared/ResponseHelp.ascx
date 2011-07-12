@@ -7,7 +7,7 @@
 		<% foreach (MemberDescription member in Model.Members) %>
 		<% { %>
 			<li><strong><%= member.Name %></strong> : <em><%= member.Type.Name %></em> - <%= member.Summary %></li>
-			<% Html.RenderPartial("ResponseHelp", member.Type); %>
+			<% Html.RenderPartial("~/bin/Views/Shared/ResponseHelp.ascx", member.Type); %>
 		<% } %>
 	</ul>
 <% } %>

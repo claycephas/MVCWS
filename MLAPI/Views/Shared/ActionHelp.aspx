@@ -22,7 +22,7 @@
 		<h2>Response</h2>
 		<ul>
 			<li><strong><%= Model.Response.Name %></strong> : <em><%= Model.Response.Name %></em> - <%= Model.Response.Summary %></li>
-			<% Html.RenderPartial("ResponseHelp", Model.Response); %>
+			<% Html.RenderPartial("~/bin/Views/Shared/ResponseHelp.ascx", Model.Response); %>
 		</ul>
 		<p><a href="../?mode=help">Back</a></p>
 	</div>

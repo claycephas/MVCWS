@@ -26,7 +26,7 @@ namespace MLAPI
 				{
 					filterContext.Result = new ViewResult()
 					{
-						ViewName = "ObjectHelp",
+						ViewName = "~/bin/Views/Shared/ObjectHelp.aspx",
 						ViewData = new ViewDataDictionary<ObjectDescription>(type),
 					};
 				}
@@ -35,7 +35,7 @@ namespace MLAPI
 					ActionDescription action = type.Actions.First(a => a.Name.ToLower() == filterContext.ActionDescriptor.ActionName.ToLower());
 					filterContext.Result = new ViewResult()
 					{
-						ViewName = "ActionHelp",
+						ViewName = "~/bin/Views/Shared/ActionHelp.aspx",
 						ViewData = new ViewDataDictionary<ActionDescription>(action),
 					};
 				}
