@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Web.Mvc;
 using MLAPI.Example.Search.Models;
+using System.Net;
 
 namespace MLAPI.Example.Search.Controllers
 {
@@ -13,12 +14,26 @@ namespace MLAPI.Example.Search.Controllers
 	{
 	// Methods
 		/// <summary>
-		/// Finds a list of articles.
+		/// Finds a list of articles related to a topic.
 		/// </summary>
 		/// <param name="topic">The name of a topic.</param>
-		/// <returns>A list of articles related to <paramref name="topic"/>.</returns>
+		/// <returns>A list of articles related to a topic.</returns>
+		/// <example url="?topic=Astronomy">Articles about Astronomy</example>
+		/// <example url=".">Articles about nothing</example>
+		/// <exception errorCode="NastyTopic" statusCode="400" url="?topic=Catastrophes">Articles about Catastrophes</exception>
 		public ServiceResult<ArticleList> Find(string topic)
 		{
+			if (topic == "Catastrophes")
+			{
+				return new ServiceResult<ArticleList>(new Error()
+				{
+					Code = "NastyTopic",
+					Message = "Think happy thoughts instead.",
+					StatusCode = (int)HttpStatusCode.BadRequest,
+				});
+			}
+
+
 			ArticleList page = new ArticleList();
 			List<Article> articles = new List<Article>();
 			for (int i = 0; i < 10; ++i)

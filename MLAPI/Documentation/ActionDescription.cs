@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Xml.Linq;
 
 namespace MLAPI.Documentation
@@ -166,13 +167,28 @@ namespace MLAPI.Documentation
 					string parameterString = String.Empty;
 					if (method.GetParameters().Length > 0)
 					{
-						parameterString = "(" + string.Join(",", method.GetParameters().Select(x => x.ParameterType.FullName).ToArray()) + ")";
+						parameterString = "(" + string.Join(",", method.GetParameters().Select(x => GetTypeDocumentationName(x.ParameterType)).ToArray()) + ")";
 					}
 					string fullMethodName = method.DeclaringType.FullName + "." + method.Name + parameterString;
 					methodXml = members.Elements().FirstOrDefault(e => e.Attribute("name").Value == "M:" + fullMethodName);
 				}
 			}
 			return methodXml;
+		}
+
+		static private string GetTypeDocumentationName(Type type)
+		{
+			StringBuilder name = new StringBuilder(type.FullName);
+			if (type.IsGenericType)
+			{
+				name = new StringBuilder(type.Namespace);
+				name.Append(".");
+				name.Append(type.Name.Substring(0, type.Name.IndexOf("`")));
+				name.Append("{");
+				name.Append(string.Join(",", type.GetGenericArguments().Select(t => GetTypeDocumentationName(t)).ToArray()));
+				name.Append("}");
+			}
+			return name.ToString();
 		}
 	}
 }

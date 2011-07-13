@@ -20,18 +20,50 @@ namespace MLAPI
 			this._data = data;
 		}
 
+		/// <summary>
+		/// Constructs a new result for an error case.
+		/// </summary>
+		/// <param name="error">The error that occured.</param>
+		public ServiceResult(Error error)
+		{
+			this._error = error;
+		}
+
 	// Fields
 		private T _data;
+		private Error _error;
 
 	// Properties
 		/// <summary>
-		/// Gets the data that is to be returned in the result.
+		/// Gets the data that is to be returned in the result or <c>null</c> if this is an error.
 		/// </summary>
 		public T Data
 		{
 			get
 			{
 				return this._data;
+			}
+		}
+
+		/// <summary>
+		/// Gets the error that occured or <c>null</c> if this is not an error.
+		/// </summary>
+		public Error Error
+		{
+			get
+			{
+				return this._error;
+			}
+		}
+
+		/// <summary>
+		/// Gets a value indicating whether or not this is an error.
+		/// </summary>
+		public bool IsError
+		{
+			get
+			{
+				return this._error != null;
 			}
 		}
 
@@ -44,6 +76,10 @@ namespace MLAPI
 		{
 			NameValueCollection query = context.HttpContext.Request.QueryString;
 			object result = this._data;
+			if (this.IsError)
+			{
+				result = this._error;
+			}
 
 			string contentType = query["contentType"];
 			if (contentType == "json")
@@ -54,11 +90,13 @@ namespace MLAPI
 					JsonRequestBehavior = JsonRequestBehavior.AllowGet,
 				}.ExecuteResult(context);
 			}
-			else if (contentType == "xml")
+			else if (contentType == "xml" || this.IsError)
 			{
-				context.HttpContext.Response.ContentType = "application/xml";
-				XmlSerializer s = new XmlSerializer(result.GetType());
-				s.Serialize(context.HttpContext.Response.OutputStream, result);
+				context.HttpContext.Response.ContentType = "text/xml";
+				XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+				ns.Add("", "");
+				XmlSerializer xs = new XmlSerializer(result.GetType());
+				xs.Serialize(context.HttpContext.Response.OutputStream, result, ns);
 			}
 			else
 			{
@@ -66,6 +104,11 @@ namespace MLAPI
 				{
 					ViewData = new ViewDataDictionary(result),
 				}.ExecuteResult(context);
+			}
+
+			if (this.IsError)
+			{
+				context.HttpContext.Response.StatusCode = this._error.StatusCode;
 			}
 		}
 	}
