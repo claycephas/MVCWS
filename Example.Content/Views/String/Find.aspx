@@ -1,8 +1,7 @@
 ﻿<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<StringContent>" %>
 <%@ Import Namespace="MLAPI.Example.Content.Models" %>
 
-<!DOCTYPE html />
-
+<!DOCTYPE html>
 <html>
 <head>
     <title>Find</title>

@@ -1,9 +1,9 @@
-﻿using System.Linq;
+﻿using System.IO;
+using System.Linq;
 using System.Reflection;
+using System.Web;
 using System.Web.Mvc;
 using System.Xml.Linq;
-using System.Web;
-using System.IO;
 
 namespace MLAPI.Documentation
 {
@@ -41,7 +41,7 @@ namespace MLAPI.Documentation
 			{
 				return this._assembly
 					.GetTypes()
-					.Where(t => t.Name.EndsWith("Controller") && t.IsSubclassOf(typeof(Controller)))
+					.Where(t => t.Name.EndsWith("Controller") && t.IsSubclassOf(typeof(Controller)) && t.Name != "HomeController")
 					.Select(t => new ObjectDescription(t, this))
 					.ToArray();
 			}

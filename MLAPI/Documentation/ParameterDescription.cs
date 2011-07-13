@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Reflection;
 using System.Xml.Linq;
 
@@ -28,19 +26,29 @@ namespace MLAPI.Documentation
 			}
 		}
 
+		public string DefaultValue
+		{
+			get
+			{
+				string defaultValue = null;
+				XElement parameterXml = ParameterDescription.GetParameterDocumentation(this._parameter);
+				if (parameterXml != null && parameterXml.Attribute("default") != null)
+				{
+					defaultValue = parameterXml.Attribute("default").Value;
+				}
+				return defaultValue;
+			}
+		}
+
 		public string Summary
 		{
 			get
 			{
 				string summary = null;
-				XElement methodXml = ActionDescription.GetActionDocumentation((MethodInfo)this._parameter.Member);
-				if (methodXml != null)
+				XElement parameterXml = ParameterDescription.GetParameterDocumentation(this._parameter);
+				if (parameterXml != null)
 				{
-					XElement parameterXml = methodXml.Elements().FirstOrDefault(e => e.Name == "param" && e.Attribute("name").Value == this._parameter.Name);
-					if (parameterXml != null)
-					{
-						summary = parameterXml.Value;
-					}
+					summary = parameterXml.InnerText();
 				}
 				return summary;
 			}

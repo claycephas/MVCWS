@@ -51,7 +51,7 @@ namespace MLAPI.Documentation
 					XElement summaryXml = xml.Element("summary");
 					if (summaryXml != null)
 					{
-						summary = summaryXml.Value;
+						summary = summaryXml.InnerText();
 					}
 				}
 				return summary;

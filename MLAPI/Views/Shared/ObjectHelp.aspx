@@ -3,28 +3,26 @@
 
 <!DOCTYPE html>
 <html>
-<head runat="server">
+<head>
 	<title><%= Model.Name %> Object Help</title>
 </head>
 <body>
-	<div>
-		<h1><%= Model.Name %> Object</h1>
-		<p><%= Model.Summary %></p>
-		<h2>Actions</h2>
-		<ul>
-			<% if (Model.Actions != null) %>
+	<h1><%= Model.Name %> Object</h1>
+	<p><%= Model.Summary %></p>
+	<h2>Actions</h2>
+	<ul>
+		<% if (Model.Actions != null) %>
+		<% { %>
+			<% foreach (ActionDescription action in Model.Actions) %>
 			<% { %>
-				<% foreach (ActionDescription action in Model.Actions) %>
-				<% { %>
-					<li><a href="<%= action.Name.ToLower() %>/?mode=help"><%= action.Name %></a> - <%= action.Summary %>
-				<% } %>
+				<li><a href="<%= action.Name.ToLower() %>/?mode=help"><%= action.Name %></a> - <%= action.Summary %></li>
 			<% } %>
-			<% else %>
-			<% { %>
-				<li>none</li>
-			<% } %>
-		</ul>
-		<p><a href="../?mode=help">Back</a></p>
-	</div>
+		<% } %>
+		<% else %>
+		<% { %>
+			<li><em>None</em></li>
+		<% } %>
+	</ul>
+	<p><a href="../?mode=help">Back</a></p>
 </body>
 </html>

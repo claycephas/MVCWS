@@ -28,6 +28,66 @@ namespace MLAPI.Documentation
 			}
 		}
 
+		public ErrorCaseDescription[] Errors
+		{
+			get
+			{
+				ErrorCaseDescription[] errors = null;
+				XElement methodXml = ActionDescription.GetActionDocumentation(this._method);
+				if (methodXml != null)
+				{
+					errors = methodXml
+						.Elements("exception")
+						.Select(e => new ErrorCaseDescription(
+							e.Value,
+							e.Attribute("url") != null ? e.Attribute("url").Value : String.Empty,
+							e.Attribute("errorCode").Value,
+							Convert.ToInt32(e.Attribute("statusCode").Value),
+							this)).ToArray();
+				}
+				return errors;
+			}
+		}
+
+		public UseCaseDescription[] Examples
+		{
+			get
+			{
+				List<UseCaseDescription> examples = new List<UseCaseDescription>();
+				// Add default example
+				examples.Add(new UseCaseDescription("Default", ".", this));
+				XElement methodXml = ActionDescription.GetActionDocumentation(this._method);
+				if (methodXml != null)
+				{
+					examples.AddRange(methodXml
+						.Elements("example")
+						.Select(e => (UseCaseDescription)new UseCaseDescription(
+							e.Value,
+							e.Attribute("url") != null ? e.Attribute("url").Value : String.Empty,
+							this)));
+				}
+				return examples.ToArray();
+			}
+		}
+
+		public string Remarks
+		{
+			get
+			{
+				string summary = null;
+				XElement methodXml = ActionDescription.GetActionDocumentation(this._method);
+				if (methodXml != null)
+				{
+					XElement summaryXml = methodXml.Element("remarks");
+					if (summaryXml != null)
+					{
+						summary = summaryXml.InnerText();
+					}
+				}
+				return summary;
+			}
+		}
+
 		public string Summary
 		{
 			get
@@ -72,6 +132,24 @@ namespace MLAPI.Documentation
 			get
 			{
 				return new ObjectDescription(this._method.ReturnType, this.DeclaringObject.DeclaringServiceArea);
+			}
+		}
+
+		public string ResponseSummary
+		{
+			get
+			{
+				string summary = null;
+				XElement actionXml = ActionDescription.GetActionDocumentation(this._method);
+				if (actionXml != null)
+				{
+					XElement returns = actionXml.Element("returns");
+					if (returns != null)
+					{
+						summary = returns.Value;
+					}
+				}
+				return summary;
 			}
 		}
 

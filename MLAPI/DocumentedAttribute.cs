@@ -21,23 +21,34 @@ namespace MLAPI
 			ServiceAreaDescription serviceArea = new ServiceAreaDescription(filterContext.Controller.GetType().Assembly);
 			if (filterContext.HttpContext.Request["mode"] == "help")
 			{
-				ObjectDescription type = new ObjectDescription(filterContext.Controller.GetType(), serviceArea);
-				if (filterContext.ActionDescriptor.ActionName.Equals("Index", StringComparison.InvariantCultureIgnoreCase))
+				if (filterContext.Controller.GetType().Name == "HomeController")
 				{
 					filterContext.Result = new ViewResult()
 					{
-						ViewName = "~/bin/Views/Shared/ObjectHelp.aspx",
-						ViewData = new ViewDataDictionary<ObjectDescription>(type),
+						ViewName = "~/bin/Views/Shared/ServiceAreaHelp.aspx",
+						ViewData = new ViewDataDictionary<ServiceAreaDescription>(serviceArea),
 					};
 				}
 				else
 				{
-					ActionDescription action = type.Actions.First(a => a.Name.ToLower() == filterContext.ActionDescriptor.ActionName.ToLower());
-					filterContext.Result = new ViewResult()
+					ObjectDescription type = new ObjectDescription(filterContext.Controller.GetType(), serviceArea);
+					if (filterContext.ActionDescriptor.ActionName.ToLower() == "index")
 					{
-						ViewName = "~/bin/Views/Shared/ActionHelp.aspx",
-						ViewData = new ViewDataDictionary<ActionDescription>(action),
-					};
+						filterContext.Result = new ViewResult()
+						{
+							ViewName = "~/bin/Views/Shared/ObjectHelp.aspx",
+							ViewData = new ViewDataDictionary<ObjectDescription>(type),
+						};
+					}
+					else
+					{
+						ActionDescription action = type.Actions.First(a => a.Name.ToLower() == filterContext.ActionDescriptor.ActionName.ToLower());
+						filterContext.Result = new ViewResult()
+						{
+							ViewName = "~/bin/Views/Shared/ActionHelp.aspx",
+							ViewData = new ViewDataDictionary<ActionDescription>(action),
+						};
+					}
 				}
 			}
 		}

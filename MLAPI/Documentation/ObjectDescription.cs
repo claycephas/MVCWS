@@ -46,7 +46,7 @@ namespace MLAPI.Documentation
 				{
 					actions = this._innerType
 						.GetMethods()
-						.Where(m => m.DeclaringType == this._innerType && m.IsPublic)
+						.Where(m => m.DeclaringType == this._innerType && m.IsPublic && m.Name != "Index")
 						.Select(m => new ActionDescription(m, this))
 						.OrderBy(a => a.Name)
 						.ToArray();
@@ -103,7 +103,7 @@ namespace MLAPI.Documentation
 					XElement summaryXml = typeXml.Element("summary");
 					if (summaryXml != null)
 					{
-						summary = summaryXml.Value;
+						summary = summaryXml.InnerText();
 					}
 				}
 				return summary;
