@@ -1,12 +1,11 @@
-﻿<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<ObjectDescription>" %>
+﻿<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<ObjectDescription>" MasterPageFile="HelpMasterPage.Master" %>
 <%@ Import Namespace="MLAPI.Documentation" %>
 
-<!DOCTYPE html>
-<html>
-<head>
-	<title><%= Model.Name %> Object Help</title>
-</head>
-<body>
+<asp:Content ContentPlaceHolderID="TitleContent" runat="server">
+	<%= Model.Name %> Object Help
+</asp:Content>
+
+<asp:Content ContentPlaceHolderID="MainContent" runat="server">
 	<h1><%= Model.Name %> Object</h1>
 	<p><%= Model.Summary %></p>
 	<h2>Actions</h2>
@@ -24,5 +23,4 @@
 		<% } %>
 	</ul>
 	<p><a href="../?mode=help">Back</a></p>
-</body>
-</html>
+</asp:Content>

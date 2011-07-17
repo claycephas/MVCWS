@@ -1,12 +1,11 @@
-﻿<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<ServiceAreaDescription>" %>
+﻿<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<ServiceAreaDescription>" MasterPageFile="HelpMasterPage.Master" %>
 <%@ Import Namespace="MLAPI.Documentation" %>
 
-<!DOCTYPE html>
-<html>
-<head>
-    <title><%= Model.Name %> Service Area Help</title>
-</head>
-<body>
+<asp:Content ID="Content1" ContentPlaceHolderID="TitleContent" runat="server">
+	<%= Model.Name %> Service Area Help</title>
+</asp:Content>
+
+<asp:Content ID="Content2" ContentPlaceHolderID="MainContent" runat="server">
 	<h1><%= Model.Name %> Service Area</h1>
 	<h2>Objects</h2>
 	<ul>
@@ -15,5 +14,4 @@
 			<li><a href="<%= obj.Name.ToLower() %>/?mode=help"><%= obj.Name %></a> - <%= obj.Summary %></li>
 		<% } %>
 	</ul>
-</body>
-</html>
+</asp:Content>

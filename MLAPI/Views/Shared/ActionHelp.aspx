@@ -1,21 +1,11 @@
-﻿<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<ActionDescription>" %>
+﻿<%@ Page Language="C#" Inherits="System.Web.Mvc.ViewPage<ActionDescription>" MasterPageFile="HelpMasterPage.Master" %>
 <%@ Import Namespace="MLAPI.Documentation" %>
 
-<!DOCTYPE html>
-<html>
-<head runat="server">
-	<title><%= Model.DeclaringObject.Name %>.<%= Model.Name %> Action Help</title>
-	<style>
-		table, td, th
-		{
-			border: 1px solid black;
-			border-collapse: collapse;
-			text-align: left;
-			padding: 10px;
-		}
-	</style>
-	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
+<asp:Content ContentPlaceHolderID="TitleContent" runat="server">
+	<%= Model.DeclaringObject.Name %>.<%= Model.Name %> Action Help
+</asp:Content>
 
+<asp:Content ContentPlaceHolderID="HeadContent" runat="server">
 	<script type="text/javascript">
 		$(document).ready(function () {
 			$("a.xmlLink").each(function () {
@@ -28,8 +18,9 @@
 			});
 		});
 	</script>
-</head>
-<body>
+</asp:Content>
+
+<asp:Content ContentPlaceHolderID="MainContent" runat="server">
 	<h1><%= Model.DeclaringObject.Name %>.<%= Model.Name %> Action</h1>
 	<p><%= Model.Summary %></p>
 	<% if (!string.IsNullOrEmpty(Model.Remarks)) %>
@@ -121,5 +112,4 @@
 		<em>None</em> (use the &lt;exception&gt; documentation node on the action to document errors)
 	<% } %>
 	<p><a href="../?mode=help">Back</a></p>
-</body>
-</html>
+</asp:Content>

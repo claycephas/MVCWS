@@ -1,0 +1,27 @@
+﻿table, td, th
+{
+	border: 1px solid black;
+	border-collapse: collapse;
+	padding: 10px;
+	text-align: left;
+}
+
+#navigation
+{
+	background-color: #d0d0d0;
+	float: left;
+	width: 25%;
+}
+
+#navigation ul
+{
+	list-style-position: inside;
+	list-style-type: square;
+	padding-left: 10px;
+}
+
+#main
+{
+	float: right;
+	width: 75%;
+}

@@ -1,0 +1,21 @@
+﻿<%@ Master Language="C#" Inherits="System.Web.Mvc.ViewMasterPage" %>
+
+<!DOCTYPE html>
+<html>
+<head>
+	<title>
+		<asp:ContentPlaceHolder ID="TitleContent" runat="server" />
+	</title>
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js" type="text/javascript"></script>
+	<link href="/mlapi/Styles/help.css" rel="stylesheet" type="text/css" />
+	<asp:ContentPlaceHolder ID="HeadContent" runat="server" />
+</head>
+<body>
+	<div id="navigation">
+		<% Html.RenderPartial("~/bin/Views/Shared/HelpNavigation.ascx", Model); %>
+	</div>
+	<div id="main">
+		<asp:ContentPlaceHolder ID="MainContent" runat="server" />
+	</div>
+</body>
+</html>
